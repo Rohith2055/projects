@@ -1,0 +1,39 @@
+%3DOF flight equation without wind gradient
+syms V CC CG SC SG
+
+m = 10;
+g = 9.8;
+rho = 1.225;
+S =2;
+Cd = 0.1;
+Cl = 0.7;
+L = 0.5 * rho * V^2 * S * Cl;
+D = 0.5 * rho * V^2 * S * Cd;
+T = 80;
+Tz = [CC -SC 0; SC CC 0; 0 0 1];
+Ty = [CG 0 SG; 0 1 0; -SG 0 CG];
+M = [0;0;-m*g];
+AD = [-D;0;L];
+TA = [T;0;0];
+
+B = (M + Tz*Ty*AD + Tz*Ty*TA)./m;
+%display(B)
+%u = x(2);
+%v = x(4);
+%w = x(6);
+%V = (sqrt(u^2+v^2+w^2));
+%CG = u/V; Cos gamma
+%SG = w/V; Sin gamma
+%CC = u/V; Cos Chi
+%SC = u/V; Sin Chi
+
+odefunc = @(t,x) [x(2);
+                   8*(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))((x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2)))- (49(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))(sqrt(x(2)^2+x(4)^2+x(6)^2)))/4000 + (343*(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))(x(2)/sqrt(x(6)^2+x(4)^2+x(6)^2))(sqrt(x(2)^2+x(4)^2+x(6)^2)))/4000;
+                   x(4);
+                   8*(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))(x(4)/sqrt(x(2)^2+x(4)^2+x(6)^2)) - (49(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))(x(4)/sqrt(x(2)^2+x(4)^2+x(6)^2))(sqrt(x(2)^2+x(4)^2+x(6)^2)))/4000 + (343*(x(2)/sqrt(x(4)^2+x(4)^2+x(6)^2))(x(6)/sqrt(x(2)^2+x(4)^2+x(6)^2))(sqrt(x(2)^2+x(4)^2+x(6)^2)))/4000;
+                   x(6);
+                   (343*(x(2)/sqrt(x(2)^2+x(4)^2+x(6)^2))(sqrt(x(2)^2+x(4)^2+x(6)^2)))/4000 - 8(x(6)/sqrt(x(2)^2+x(4)^2+x(6)^2)) + (49*(x(6)/sqrt(x(2)^2+x(4)^2+x(6)^2))*(sqrt(x(2)^2+x(4)^2+x(6)^2)))/4000 - 49/5];
+t_span = linspace(1,50,100);
+initial_values = [0;15;0;15; 0;15];
+[t,x] = ode45(odefunc,t_span,initial_values);
+plot3(x(:,1),x(:,3),x(:,5),color='red')
