@@ -1,0 +1,28 @@
+
+m = 1; % mass (kg)
+g = 9.8; % gravitational acceleration (m/s^2)
+V = 10; % initial velocity (m/s)
+theta = 60; % launch angle (degrees)
+theta_rad = deg2rad(theta); % convert angle to radians
+
+% Define the ODE function
+odefunc = @(t, x) [x(2); % dx/dt = xdot
+                   0; % d(xdot)/dt = 0
+                   x(4); % dy/dt = ydot
+                   -g]; % d(ydot)/dt = -mg
+
+% Initial conditions
+y0 = [0;V*cos(theta_rad); 0; V*sin(theta_rad)]; % [x; y; xdot; ydot]
+
+% Time span
+tspan = linspace(0,(2*V*sin(theta_rad)/g),30); % adjust time span as needed
+
+% Solve the ODE
+[t, x] = ode45(odefunc, tspan, y0);
+
+% Plot the trajectory
+plot(x(:, 1), x(:, 3),color='red')
+xlabel('Horizontal Distance (m)');
+ylabel('Vertical Distance (m)');
+title('Projectile Motion');
+grid on;
