@@ -1,0 +1,40 @@
+% With drag
+m = 1; 
+g = 9.8; 
+V = 10; 
+theta = 45; 
+theta_rad = deg2rad(theta); 
+rho = 1.22;
+S = 1;
+Cd = 0.01;
+D = 0.5 * rho * V^2 * S * Cd;
+odefunction = @(t1,x)[x(2);
+                    -0.5*rho*S*Cd*x(2)*sqrt(x(2)^2+x(4)^2)/m;
+                       x(4);
+                       -g-((0.5*rho*S*Cd*x(4)*sqrt(x(2)^2+x(4)^2))/m)];
+initial_values = [0;V*cos(theta_rad);0;V*sin(theta_rad)];
+time_span = linspace(0,(2*V*sin(theta_rad)/g)-0.02,30);
+[t1,x]=ode45(odefunction,time_span,initial_values);
+
+% Without Drag
+odefunc = @(t2, y) [y(2);
+                   0; 
+                   y(4); 
+                   -g]; 
+
+
+k0 = [0;V*cos(theta_rad); 0; V*sin(theta_rad)]; 
+
+
+tspan = linspace(0,(2*V*sin(theta_rad)/g),30);
+
+
+[t2, y] = ode45(odefunc, tspan, k0);
+plot(x(:, 1),x(:, 3),color='blue')
+hold on
+
+plot(y(:, 1), y(:, 3),color='red')
+xlabel('Horizontal Distance (m)');
+ylabel('Vertical Distance (m)');
+title('Projectile Motion');
+grid on;
